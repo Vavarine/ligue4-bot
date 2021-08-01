@@ -1,26 +1,21 @@
 import Map from "./Map.js";
 import Board from "./Board.js";
 import invertMove from "./utils/invertMove.js";
+import Game from "./Game.js";
 
 const evaScript = (scenery, myMove) => {
-  // console.log(invertMove(myMove));
+  const game = new Game(scenery, myMove);
+  let colToPlay;
 
-  const board = new Board(scenery);
+  colToPlay = game.getRandomColPlay();
 
-  board.getLoserCell(myMove);
+  // const preferableColToPlay = game.getPreferableColToPlay();
 
-  // console.log(myMove);
-  // console.log(board.getLines());
-  // console.log("horizontal lines", sceneryMap.getHorizontalLinesMap());
-  // console.log("Vertical lines", sceneryMap.getVerticalLinesMap());
-  // console.log("First diagonal lines", sceneryMap.getFirstDiagonalsMap());
-  // console.log("Second diagonal lines", sceneryMap.getSecondDiagonalsMap());
+  // if (!!preferableColToPlay) {
+  //   colToPlay = preferableColToPlay;
+  // }
 
-  // console.log(sceneryMap.linesMap);
-
-  return Math.floor(Math.random() * 8);
+  return colToPlay;
 };
-
-//retornar um número entre 0 e 7
 
 export default evaScript;
