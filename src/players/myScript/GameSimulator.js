@@ -11,7 +11,6 @@ class GameSimulator {
 
   play(curColIndex, curMove, curScenery) {
     const colToPlay = curScenery[curColIndex];
-
     let rowToPlay;
 
     rowToPlay = colToPlay.findIndex((row) => row !== undefined) - 1;
@@ -29,8 +28,6 @@ class GameSimulator {
     let curMove = myMove;
     let curColPlay = firstColToPlay;
 
-    // console.table(curScenery);
-
     const gameData = {
       result: 0,
       plays: 0,
@@ -38,10 +35,8 @@ class GameSimulator {
     };
 
     do {
-      // console.table(board.scenery);
       curScenery = this.play(curColPlay, curMove, curScenery);
       board.setScenery(curScenery);
-      // console.table(board.scenery);
 
       if (board.isLost(invertMove(myMove))) {
         gameData.result = 3;
@@ -55,19 +50,11 @@ class GameSimulator {
         gameData.result = 1;
       }
 
-      // console.log(gameData.result);
-
       curColPlay = Math.floor(Math.random() * 8);
       curMove = invertMove(curMove);
 
-      // console.log(gameData.plays);
       gameData.plays++;
-      // gameData.points;
     } while (gameData.result === 0);
-
-    // gameData.points = (10 * gameData.result) / gameData.plays;
-
-    // console.log(gameData.points);
 
     return gameData;
   }
