@@ -1,5 +1,7 @@
 import Map from "./Map.js";
+import invertMove from "./utils/invertMove.js";
 import quantityOfMovesInLine from "./utils/quantityOfMovesInLine.js";
+import quantityOfUndefinedInLine from "./utils/quantityOfUndefinedInLine.js";
 
 class Board {
   constructor(scenery) {
@@ -20,7 +22,7 @@ class Board {
   }
 
   isAWinnerLine(line, lineIndex, move) {
-    const quantityOfUndefinedCells = line.filter((cell) => cell === undefined).length;
+    const quantityOfUndefinedCells = quantityOfUndefinedInLine(line);
     const undefinedCellIndex = this.getNotPlayedCellInLine(line, lineIndex);
 
     if (quantityOfUndefinedCells > 1 || !undefinedCellIndex) return false;
@@ -69,7 +71,29 @@ class Board {
     return col >= this.colQuantity || row >= this.rowQuantity;
   }
 
-  hasAWinner() {}
+  isLost(move) {
+    const openentMove = invertMove(move);
+
+    return this.getLines().some((line) => {
+      return quantityOfMovesInLine(line, openentMove) === 4;
+    });
+  }
+
+  isDraw() {
+    return this.getLines().every((line) => {
+      return quantityOfUndefinedInLine(line) === 0;
+    });
+  }
+
+  copyScenery(scenery) {
+    const newScenery = new Array();
+
+    for (let i = 0; i < scenery.length; i++) {
+      newScenery.push(scenery[i].slice());
+    }
+
+    return newScenery;
+  }
 
   // Getters & Setters
   setScenery(scenery) {

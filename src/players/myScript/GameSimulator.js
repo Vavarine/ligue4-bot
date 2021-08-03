@@ -1,4 +1,5 @@
 import Board from "./Board.js";
+import Game from "./Game.js";
 import invertMove from "./utils/invertMove.js";
 import quantityOfMovesInLine from "./utils/quantityOfMovesInLine.js";
 
@@ -8,28 +9,67 @@ class GameSimulator {
     this.scenery = scenery;
   }
 
-  play(colIndex, move, scenery = this.scenery) {
-    const colToPlay = scenery[colIndex];
+  play(curColIndex, curMove, curScenery) {
+    const colToPlay = curScenery[curColIndex];
 
-    const rowToPlay = colToPlay.reduce((acc, row, index) => {
-      if (row === undefined) return index;
+    let rowToPlay;
 
-      return acc;
-    }, 0);
+    rowToPlay = colToPlay.findIndex((row) => row !== undefined) - 1;
 
-    const playedScenery = scenery;
-    playedScenery[colIndex][rowToPlay] = move;
+    if (rowToPlay < 0) rowToPlay = colToPlay.length - 1;
 
-    return playedScenery;
+    curScenery[curColIndex][rowToPlay] = curMove;
+
+    return curScenery;
   }
 
-  isSceneryLost(scenery, move) {
+  simulateGame(scenery, myMove, firstColToPlay) {
     const board = new Board(scenery);
-    const openentMove = invertMove(move);
+    let curScenery = board.copyScenery(scenery);
+    let curMove = myMove;
+    let curColPlay = firstColToPlay;
 
-    return board.getLines().some((line) => {
-      return quantityOfMovesInLine(line, openentMove) === 4;
-    });
+    // console.table(curScenery);
+
+    const gameData = {
+      result: 0,
+      plays: 0,
+      points: 0,
+    };
+
+    do {
+      // console.table(board.scenery);
+      curScenery = this.play(curColPlay, curMove, curScenery);
+      board.setScenery(curScenery);
+      // console.table(board.scenery);
+
+      if (board.isLost(invertMove(myMove))) {
+        gameData.result = 3;
+      }
+
+      if (board.isDraw()) {
+        gameData.result = 2;
+      }
+
+      if (board.isLost(myMove)) {
+        gameData.result = 1;
+      }
+
+      // console.log(gameData.result);
+
+      curColPlay = Math.floor(Math.random() * 8);
+      curMove = invertMove(curMove);
+
+      // console.log(gameData.plays);
+      gameData.plays++;
+      // gameData.points;
+    } while (gameData.result === 0);
+
+    // gameData.points = (10 * gameData.result) / gameData.plays;
+
+    // console.log(gameData.points);
+
+    return gameData;
   }
 }
 

@@ -5,10 +5,15 @@ import invertMove from "./utils/invertMove.js";
 class Game {
   constructor(scenery, myMmove) {
     this.myMove = myMmove;
-    this.scenery = scenery;
+    this.scenery = scenery.slice();
+    this.auxScenery = new Array();
     this.board = new Board(scenery);
     this.gameSim = new GameSimulator(scenery);
     this.openentMove = invertMove(myMmove);
+
+    for (let i = 0; i < this.scenery.length; i++) {
+      this.auxScenery.push(scenery[i].slice());
+    }
   }
 
   getPreferableColToPlay() {
@@ -48,16 +53,46 @@ class Game {
   getRandomColToPlay() {
     const randomPlay = Math.floor(Math.random() * 8);
 
-    if (this.playWillCauseOnLost(randomPlay)) {
-      console.log(`Jogada evitada na coluna ${randomPlay}`);
-
-      return this.getRandomPlay();
-    }
-
     return randomPlay;
   }
 
-  get;
+  getBestPlay(qtdOfSimulationForCol) {
+    // console.table(this.scenery);
+    // console.table(this.auxScenery);
+
+    const colsGamesPointsSum = this.auxScenery.map((col, index, cols) => {
+      let colGamesPoitsSum = 0;
+
+      for (let i = 0; i < qtdOfSimulationForCol; i++) {
+        const gameData = this.gameSim.simulateGame(this.auxScenery, this.myMove, index);
+        if (gameData.result === 3) {
+          colGamesPoitsSum += 2;
+        }
+
+        if (gameData.result === 2) {
+          colGamesPoitsSum += 1;
+        }
+
+        if (gameData.result === 1) {
+          colGamesPoitsSum -= 2;
+        }
+        // console.log(gameData);
+      }
+
+      // console.log(colGamegPoitsSum);
+
+      return colGamesPoitsSum;
+    });
+
+    console.log(colsGamesPointsSum);
+
+    colsGamesPointsSum.indexOf(Math.max(...colsGamesPointsSum));
+
+    return colsGamesPointsSum.indexOf(Math.max(...colsGamesPointsSum));
+
+    // console.table(this.scenery);
+    // console.table(this.auxScenery);
+  }
 }
 
 export default Game;

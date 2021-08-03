@@ -4,18 +4,20 @@ import invertMove from "./utils/invertMove.js";
 import Game from "./Game.js";
 
 const evaScript = (scenery, myMove) => {
+  // console.table(scenery);
   const game = new Game(scenery, myMove);
-  let colToPlay;
 
-  colToPlay = game.getRandomColPlay();
+  // colToPlay = game.getRandomColPlay();
 
   // const preferableColToPlay = game.getPreferableColToPlay();
 
   // if (!!preferableColToPlay) {
-  //   colToPlay = preferableColToPlay;
+  // colToPlay = preferableColToPlay;
   // }
 
-  return colToPlay;
+  // game.getBestPlay(500);
+
+  return game.getBestPlay(500);
 };
 
 export default evaScript;
