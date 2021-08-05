@@ -1,7 +1,5 @@
 import Board from "./Board.js";
-import Game from "./Game.js";
 import invertMove from "./utils/invertMove.js";
-import quantityOfMovesInLine from "./utils/quantityOfMovesInLine.js";
 
 class GameSimulator {
   constructor(scenery) {
