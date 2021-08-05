@@ -9,6 +9,41 @@ class GameSimulator {
     this.scenery = scenery;
   }
 
+  isColFull(col) {
+    return col.every((row) => row !== undefined);
+  }
+
+  willCauseLost(curMove, col, scenery) {
+    let playedScenery = this.board.copyScenery(scenery);
+    playedScenery = this.play(col, curMove, playedScenery);
+
+    const playedBoard = new Board(playedScenery);
+
+    return playedBoard.hasAWinningCol(invertMove(curMove));
+  }
+
+  willCauseWin(curMove, colIndex, scenery) {
+    let playedScenery = this.board.copyScenery(scenery);
+    playedScenery = this.play(colIndex, curMove, playedScenery);
+
+    const playedBoard = new Board(playedScenery);
+
+    return playedBoard.isLost(invertMove(curMove));
+  }
+
+  getColToPlay(scenery, curMove) {
+    let colToPlay;
+    let isColFull = false;
+
+    do {
+      colToPlay = Math.floor(Math.random() * 8);
+
+      isColFull = this.isColFull(scenery[colToPlay]);
+    } while (this.isColFull(scenery[colToPlay]));
+
+    return colToPlay;
+  }
+
   play(curColIndex, curMove, curScenery) {
     const colToPlay = curScenery[curColIndex];
     let rowToPlay;
@@ -50,7 +85,7 @@ class GameSimulator {
         gameData.result = 1;
       }
 
-      curColPlay = Math.floor(Math.random() * 8);
+      curColPlay = this.getColToPlay(scenery, curMove);
       curMove = invertMove(curMove);
 
       gameData.plays++;

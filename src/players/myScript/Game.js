@@ -20,23 +20,29 @@ class Game {
     const colsGamesPointsSum = this.auxScenery.map((col, index, cols) => {
       let colGamesPoitsSum = 0;
 
+      const isColFull = this.gameSim.isColFull(col);
+      const willWin = this.gameSim.willCauseWin(this.myMove, index, this.auxScenery);
+      const willLost = this.gameSim.willCauseLost(this.myMove, index, this.auxScenery);
+
+      if (isColFull || willLost) return -Infinity;
+      if (willWin) return +Infinity;
+
+      const gameResultMap = {
+        3: (points) => (points += 1),
+        2: (points) => points,
+        1: (points) => (points -= 1),
+      };
+
       for (let i = 0; i < qtdOfSimulationForCol; i++) {
         const gameData = this.gameSim.simulateGame(this.auxScenery, this.myMove, index);
-        if (gameData.result === 3) {
-          colGamesPoitsSum += 2;
-        }
 
-        if (gameData.result === 2) {
-          colGamesPoitsSum += 1;
-        }
-
-        if (gameData.result === 1) {
-          colGamesPoitsSum -= 2;
-        }
+        colGamesPoitsSum = gameResultMap[gameData.result](colGamesPoitsSum);
       }
 
       return colGamesPoitsSum;
     });
+
+    console.log(colsGamesPointsSum);
 
     return colsGamesPointsSum.indexOf(Math.max(...colsGamesPointsSum));
   }

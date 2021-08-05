@@ -18,6 +18,62 @@ class Board {
     });
   }
 
+  hasAWinningCol(curMove) {
+    return this.getLines().some((line, index) =>
+      this.isAWinnerLine(line, index, curMove)
+    );
+  }
+
+  isAWinnerLine(line, lineIndex, move) {
+    const quantityOfUndefinedCells = quantityOfUndefinedInLine(line);
+    const undefinedCellIndex = this.getNotPlayedCellInLine(line, lineIndex);
+
+    if (quantityOfUndefinedCells > 1 || !undefinedCellIndex) return false;
+
+    if (
+      quantityOfMovesInLine(line, move) === 3 &&
+      this.isPlayableCell(undefinedCellIndex)
+    )
+      return true;
+
+    return false;
+  }
+
+  getNotPlayedCellInLine(line, lineIndex) {
+    const cellLineIndex = line.findIndex((cell) => cell === undefined);
+
+    return this.linesMap[lineIndex][cellLineIndex];
+  }
+
+  isPlayableCell(cellIndex) {
+    const cellValue = this.getCellValue(cellIndex);
+    const underneathCellIndex = this.getUnderneathCellIndex(cellIndex);
+    const underneathCellValue = this.getCellValue(underneathCellIndex);
+
+    return (
+      cellValue === undefined &&
+      (underneathCellValue !== undefined || this.isCellOutOfBounds(underneathCellIndex))
+    );
+  }
+
+  getCellValue(cellIndex) {
+    const [col, row] = cellIndex;
+
+    return this.scenery[col][row];
+  }
+
+  isCellOutOfBounds(cellIndex) {
+    const [col, row] = cellIndex;
+
+    return row >= this.rowQuantity;
+  }
+
+  getUnderneathCellIndex(cellIndex) {
+    const [col, row] = cellIndex;
+
+    return [col, row + 1];
+  }
+
   isLost(move) {
     const openentMove = invertMove(move);
 
